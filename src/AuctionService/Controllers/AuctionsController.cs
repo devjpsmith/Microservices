@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,12 +48,13 @@ public class AuctionsController : Controller
         return _mapper.Map<AuctionDto>(auction);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<AuctionDto>> CreateAuction(CreateAuctionDto createAuctionDto)
     {
         var auction = _mapper.Map<Auction>(createAuctionDto);
         // TODO: add current user as seller
-        auction.Seller = "test";
+        auction.Seller = User.Identity.Name;
         _db.Auctions.Add(auction);
         var auctionDto = _mapper.Map<AuctionDto>(auction);
         await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(auctionDto));
@@ -63,15 +65,16 @@ public class AuctionsController : Controller
         return CreatedAtAction(nameof(GetById), new {auction.Id}, _mapper.Map<AuctionDto>(auction));
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateAuction(Guid id, UpdateAuctionDto updateAuction)
     {
         var auction = await _db.Auctions
             .Include(x => x.Item)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id && x.Seller == User.Identity.Name);
+        
         if (auction == null) return new NotFoundResult();
         
-        // TODO: check seller == user
         auction.Item.Make = updateAuction.Make ?? auction.Item.Make;
         auction.Item.Model = updateAuction.Model ?? auction.Item.Model;
         auction.Item.Color = updateAuction.Color ?? auction.Item.Color;
@@ -87,10 +90,11 @@ public class AuctionsController : Controller
         return BadRequest("Problem saving changes");
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteAuction(Guid id)
     {
-        var auction = await _db.Auctions.FirstOrDefaultAsync(x => x.Id == id);
+        var auction = await _db.Auctions.FirstOrDefaultAsync(x => x.Id == id && x.Seller == User.Identity.Name);
 
         if (auction == null) return NotFound();
         
