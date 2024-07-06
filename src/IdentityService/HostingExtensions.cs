@@ -28,7 +28,9 @@ internal static class HostingExtensions
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-
+                // the following makes IdSvr format the scopes as space-delimited rather than an array. This is the latest 
+                // Oauth spec and is required for the latest ASPNET ClaimsPrincipal to have the scopes attached
+                options.EmitScopesAsSpaceDelimitedStringInJwt = true;
                 // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                 // options.EmitStaticAudienceClaim = true;
             })

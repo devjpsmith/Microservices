@@ -1,9 +1,12 @@
+using AuctionService.Authorization;
 using AuctionService.Consumers;
 using AuctionService.Data;
 using AuctionService.RequestHelpers;
 using AutoMapper;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace AuctionService;
@@ -12,15 +15,25 @@ public static class StartupExtensions
 {
     public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration config)
     {
+        var authority = config.GetSection("Authentication").GetValue<string>("Authority");
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opts =>
             {
-                var authConfig = config.GetSection("Authentication");
-                opts.Authority = authConfig.GetValue<string>("Authority");
+                
+                opts.Authority = authority;
                 opts.RequireHttpsMetadata = false;
                 opts.TokenValidationParameters.ValidateAudience = false;
                 opts.TokenValidationParameters.NameClaimType = "username";
             });
+        services.AddAuthorization(opts =>
+        {
+            // this policy is scoped "internal". In our system here, this allows endpoints to be restricted. M2M tokens 
+            // have the "internal" scope while user tokens do not
+            opts.AddPolicy("internal", policy => policy.Requirements.Add(new HasScopeRequirement("internal", authority)));
+        });
+
+        services.AddSingleton<IAuthorizationHandler, HasScopeHandler>();
+        
         return services;
     }
 
