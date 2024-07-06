@@ -4,18 +4,32 @@ namespace IdentityService;
 
 public static class Config
 {
+    public static IEnumerable<ApiResource> ApiResources =>
+        new[]
+        {
+            new ApiResource("auctionsApi", "Auction API")
+            {
+                Scopes = { "internal", "auctionApp" }
+            },
+            new ApiResource("financialsApi", "Cash Money")
+            {
+                Scopes = { "read.financials" }
+            }
+        };
+    
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
             new IdentityResources.OpenId(),
-            new IdentityResources.Profile(),
+            new IdentityResources.Profile()
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
-        new ApiScope[]
+        new[]
         {
-            new ApiScope("auctionApp", "Auction app full access"),
-            new ApiScope("internal", "M2M Internal Services")
+            new ApiScope("auctionApp", "Auction app access"),
+            new ApiScope("internal", "M2M Internal Services"),
+            new ApiScope("read.financials", "Financial Api access")
         };
 
     public static IEnumerable<Client> Clients =>
@@ -29,11 +43,7 @@ public static class Config
             
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
-            
-                AllowedScopes =
-                {
-                    "internal", "auctionApp",
-                }
+                AllowedScopes = [ "internal", "read.financials" ]
             },
 
             // interactive client using code flow + pkce

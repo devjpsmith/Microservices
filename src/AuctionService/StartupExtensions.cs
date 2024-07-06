@@ -16,13 +16,15 @@ public static class StartupExtensions
     public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, IConfiguration config)
     {
         var authority = config.GetSection("Authentication").GetValue<string>("Authority");
+        var audience = config.GetSection("Authentication").GetValue<string>("Audience");
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opts =>
             {
                 
                 opts.Authority = authority;
+                opts.Audience = audience;
                 opts.RequireHttpsMetadata = false;
-                opts.TokenValidationParameters.ValidateAudience = false;
+                opts.TokenValidationParameters.ValidateAudience = true;
                 opts.TokenValidationParameters.NameClaimType = "username";
             });
         services.AddAuthorization(opts =>
