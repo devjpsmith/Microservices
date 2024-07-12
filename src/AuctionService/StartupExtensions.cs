@@ -58,7 +58,15 @@ public static class StartupExtensions
                 x.AddConsumersFromNamespaceContaining<AuctionCreatedFaultConsumer>();
                 x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("auction", false));
 
-                x.UsingRabbitMq((context, cfg) => { cfg.ConfigureEndpoints(context); });
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(config["RabbitMq:Host"], "/", host =>
+                    {
+                        host.Username(config.GetValue("RabbitMq:Username", "guest"));
+                        host.Password(config.GetValue("RabbitMq:Password", "guest"));
+                    });
+                    cfg.ConfigureEndpoints(context);
+                });
             });
     }
 

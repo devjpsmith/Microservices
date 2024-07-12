@@ -28,6 +28,10 @@ internal static class HostingExtensions
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
+                if (builder.Environment.IsEnvironment("Docker"))
+                {
+                    options.IssuerUri = "identity-svc";
+                }
                 // the following makes IdSvr format the scopes as space-delimited rather than an array. This is the latest 
                 // Oauth spec and is required for the latest ASPNET ClaimsPrincipal to have the scopes attached
                 options.EmitScopesAsSpaceDelimitedStringInJwt = true;
