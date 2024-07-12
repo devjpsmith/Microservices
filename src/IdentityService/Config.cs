@@ -9,14 +9,14 @@ public static class Config
         {
             new ApiResource("auctionsApi", "Auction API")
             {
-                Scopes = { "internal", "auctionApp" }
+                Scopes = {"internal", "auctionApp"}
             },
             new ApiResource("financialsApi", "Cash Money")
             {
-                Scopes = { "read.financials" }
+                Scopes = {"read.financials"}
             }
         };
-    
+
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
@@ -40,10 +40,10 @@ public static class Config
             {
                 ClientId = "m2m.client",
                 ClientName = "Client Credentials Client",
-            
+
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
-                ClientSecrets = { new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256()) },
-                AllowedScopes = [ "internal", "read.financials" ]
+                ClientSecrets = {new Secret("511536EF-F270-4058-80CA-1C89C192F69A".Sha256())},
+                AllowedScopes = ["internal", "read.financials"]
             },
 
             // interactive client using code flow + pkce
@@ -65,10 +65,22 @@ public static class Config
             {
                 ClientId = "postman",
                 ClientName = "Postman",
-                AllowedScopes = [ "openid", "profile", "auctionApp" ],
-                RedirectUris = { "https://www.getpostman.com/oauth2/callback" },
-                ClientSecrets = { new Secret("not-a-secret".Sha256())},
-                AllowedGrantTypes = { GrantType.ResourceOwnerPassword }
+                AllowedScopes = ["openid", "profile", "auctionApp"],
+                RedirectUris = {"https://www.getpostman.com/oauth2/callback"},
+                ClientSecrets = {new Secret("not-a-secret".Sha256())},
+                AllowedGrantTypes = {GrantType.ResourceOwnerPassword}
+            },
+            new Client
+            {
+                ClientId = "nextApp",
+                ClientName = "nextApp",
+                ClientSecrets = {new Secret("secret".Sha256())},
+                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                RequirePkce = false,
+                RedirectUris = {"http://localhost:3000/api/auth/callback/id-server"},
+                AllowOfflineAccess = true,
+                AllowedScopes = {"openid", "profile", "auctionApp"},
+                AccessTokenLifetime = 3600 * 24 * 30
             }
         };
 }
