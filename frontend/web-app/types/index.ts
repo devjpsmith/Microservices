@@ -22,3 +22,9 @@ export type Auction = {
     imageUrl: string;
     id: string;
 };
+
+export class RequestError extends Error {
+    constructor(message: string, public status: string) {
+        super(message);
+    }
+}

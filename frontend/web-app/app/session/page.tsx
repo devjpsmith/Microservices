@@ -10,7 +10,7 @@ async function Page() {
             <Heading title={'Session dashboard'} />
             <div className="bg-blue-200 border-2 border-blue-500">
                 <h3 className={'text-lg'} >Session data</h3>
-                <pre>{JSON.stringify(session)}</pre>
+                <pre className={'overflow-auto'}>{JSON.stringify(session, null, 2)}</pre>
             </div>
             <div className="mt-4">
                 <AuthTest token={session?.user.token ?? ''} />
