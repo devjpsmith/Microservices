@@ -3,6 +3,8 @@
 This repo contains code for a system built while completing a Udemy course on microservices.
 The system is bundled as an application called "Carsties"; the concept is that of a car auction site and the name is word-play on the auction house, "Christie's"
 
+![system architecture image](carsties_architecture.png "Auction App Architecture")
+
 Requirements to run the system
 - Docker
 - Node JS version 18.17 or higher
