@@ -5,6 +5,8 @@ The system is bundled as an application called "Carsties"; the concept is that o
 
 ![system architecture image](carsties_architecture.png "Auction App Architecture")
 
+**NOTE:** For a mojority of this project, I simply followed along with the instructional videos and deviated very little from the code the instructor wrote. I took this course simply to refresh myself on good system architecture and maybe learn a few new tricks. For the BiddingService, I deviated from the code a lot because the instructor was not adhering to SOLID code design and I decided to make that particular project more of an exercise in SOLID design for myself.
+
 Requirements to run the system
 - Docker
 - Node JS version 18.17 or higher
